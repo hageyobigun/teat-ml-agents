@@ -7,12 +7,12 @@ using Unity.MLAgents.Sensors;
 public class RollerAgent : Agent
 {
     public Transform target;
-    Rigidbody rigidbody;
+    private Rigidbody _rigidbody;
 
     //初期化
     public override void Initialize()
     {
-        rigidbody = GetComponent<Rigidbody>();
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
     //エピソード開始時
@@ -20,8 +20,8 @@ public class RollerAgent : Agent
     {
         if (this.transform.position.y < 0)
         {
-            this.rigidbody.angularVelocity = Vector3.zero;
-            this.rigidbody.velocity = Vector3.zero;
+            this._rigidbody.angularVelocity = Vector3.zero;
+            this._rigidbody.velocity = Vector3.zero;
             this.transform.position = new Vector3(0, 0.5f, 0);
         }
         target.position = new Vector3(Random.value * 8 - 4, 0.5f, Random.value * 8 - 4);
@@ -32,8 +32,8 @@ public class RollerAgent : Agent
     {
         sensor.AddObservation(target.position);
         sensor.AddObservation(this.transform.position);
-        sensor.AddObservation(rigidbody.velocity.x);
-        sensor.AddObservation(rigidbody.velocity.y);
+        sensor.AddObservation(_rigidbody.velocity.x);
+        sensor.AddObservation(_rigidbody.velocity.y);
     }
 
     //行動実行時に呼ばれる
@@ -42,7 +42,7 @@ public class RollerAgent : Agent
         Vector3 controlSignal = Vector3.zero;
         controlSignal.x = vectorAction[0];
         controlSignal.z = vectorAction[1];
-        rigidbody.AddForce(controlSignal * 10);
+        _rigidbody.AddForce(controlSignal * 10);
 
         //到着
         float distanceToTarget = Vector3.Distance(this.transform.position, target.position);
